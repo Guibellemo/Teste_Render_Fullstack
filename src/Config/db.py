@@ -4,20 +4,19 @@ import os
 db = SQLAlchemy()
 
 def init_db(app):
-    uri = os.getenv("DATABASE_URL", "postgresql://usuario:senha@db:5432/mamutedb")
+    # Pega a URL do banco do Render
+    database_url = os.getenv("DATABASE_URL")
 
-    # Corrige prefixo para compatibilidade com Render e SQLAlchemy
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
+    if not database_url:
+        # Fallback para desenvolvimento local
+        database_url = "postgresql://postgres:postgres@db:5432/meubanco"
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = uri
+    # Corrige URLs antigas que começam com postgres://
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
-
-    # Cria tabelas, mas sem travar o app se o banco ainda não estiver pronto
-    with app.app_context():
-        try:
-            db.create_all()
-        except Exception as e:
-            print(f"Banco ainda não disponível: {e}")
+    return db
