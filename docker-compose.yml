@@ -21,6 +21,8 @@ services:
   app:
     build: .
     container_name: minha_app
+    environment:
+      - DATABASE_URL=postgresql://usuario:senha@db:5432/mamutedb
     volumes:
       - .:/app
     working_dir: /app
