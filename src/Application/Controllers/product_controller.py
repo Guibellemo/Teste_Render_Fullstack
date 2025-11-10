@@ -31,7 +31,7 @@ class ProductController:
             file_path = os.path.join(UPLOAD_FOLDER, unique_name)
             file.save(file_path)
 
-            image_url = f"https://teste-render-flask-api.onrender.com/static/images/{unique_name}"
+            image_url = f"/static/images/{unique_name}"
 
             product_data = {
                 "name": form.get("name"),
